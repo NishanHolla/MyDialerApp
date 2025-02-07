@@ -1,17 +1,25 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { addDigit, deleteDigit, clearNumber } from "../../store/slices/dialerSlice";
+import {
+  addDigit,
+  deleteDigit,
+  clearNumber,
+  addCallToHistory,
+} from "../../store/slices/dialerSlice";
 import { RootState } from "../../store/store";
 import { useRouter } from "expo-router";
 
 export default function DialPadScreen() {
   const dispatch = useDispatch();
-  const phoneNumber = useSelector((state: RootState) => state.dialer.phoneNumber);
+  const phoneNumber = useSelector(
+    (state: RootState) => state.dialer.phoneNumber
+  );
   const router = useRouter();
 
   const handleCall = () => {
     if (phoneNumber.length > 0) {
-      router.push("/history"); // Simulate navigation to history after call
+      dispatch(addCallToHistory());
+      // router.push("/history");
     }
   };
 
@@ -46,13 +54,19 @@ export default function DialPadScreen() {
 
       {/* Controls */}
       <View style={styles.controls}>
-        <TouchableOpacity style={styles.controlButton} onPress={() => dispatch(deleteDigit())}>
+        <TouchableOpacity
+          style={styles.controlButton}
+          onPress={() => dispatch(deleteDigit())}
+        >
           <Text style={styles.controlText}>Delete</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.callButton} onPress={handleCall}>
           <Text style={styles.callText}>Call</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.controlButton} onPress={() => dispatch(clearNumber())}>
+        <TouchableOpacity
+          style={styles.controlButton}
+          onPress={() => dispatch(clearNumber())}
+        >
           <Text style={styles.controlText}>Clear</Text>
         </TouchableOpacity>
       </View>

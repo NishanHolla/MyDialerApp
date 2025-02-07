@@ -2,10 +2,12 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface DialerState {
   phoneNumber: string;
+  callHistory: string[];
 }
 
 const initialState: DialerState = {
   phoneNumber: "",
+  callHistory: [],
 };
 
 const dialerSlice = createSlice({
@@ -13,7 +15,9 @@ const dialerSlice = createSlice({
   initialState,
   reducers: {
     addDigit: (state, action: PayloadAction<string>) => {
-      state.phoneNumber += action.payload;
+      if (state.phoneNumber.length < 10) {
+        state.phoneNumber += action.payload;
+      }
     },
     deleteDigit: (state) => {
       state.phoneNumber = state.phoneNumber.slice(0, -1);
@@ -21,8 +25,14 @@ const dialerSlice = createSlice({
     clearNumber: (state) => {
       state.phoneNumber = "";
     },
+    addCallToHistory: (state) => {
+      if (state.phoneNumber) {
+        state.callHistory.unshift(state.phoneNumber);
+        state.phoneNumber = ""; // Reset after call
+      }
+    },
   },
 });
 
-export const { addDigit, deleteDigit, clearNumber } = dialerSlice.actions;
+export const { addDigit, deleteDigit, clearNumber, addCallToHistory } = dialerSlice.actions;
 export default dialerSlice.reducer;
