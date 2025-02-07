@@ -8,6 +8,8 @@ import {
 } from "../../store/slices/dialerSlice";
 import { RootState } from "../../store/store";
 import { useRouter } from "expo-router";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { ThemedText } from "@/components/ThemedText";
 
 export default function DialPadScreen() {
   const dispatch = useDispatch();
@@ -15,6 +17,11 @@ export default function DialPadScreen() {
     (state: RootState) => state.dialer.phoneNumber
   );
   const router = useRouter();
+
+  const backgroundColor = useThemeColor({}, "background");
+  const textColor = useThemeColor({}, "text");
+  const buttonColor = useThemeColor({}, "button");
+  const callColor = useThemeColor({}, "primary");
 
   const handleCall = () => {
     if (phoneNumber.length > 0) {
@@ -31,9 +38,11 @@ export default function DialPadScreen() {
   ];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor }]}>
       {/* Display Dialed Number */}
-      <Text style={styles.phoneNumber}>{phoneNumber || "Enter Number"}</Text>
+      <Text style={[styles.phoneNumber, { color: textColor }]}>
+        {phoneNumber || "Enter Number"}
+      </Text>
 
       {/* Dial Pad */}
       <View style={styles.dialPad}>
@@ -42,10 +51,12 @@ export default function DialPadScreen() {
             {row.map((num) => (
               <TouchableOpacity
                 key={num}
-                style={styles.button}
+                style={[styles.button, { backgroundColor: buttonColor }]}
                 onPress={() => dispatch(addDigit(num))}
               >
-                <Text style={styles.buttonText}>{num}</Text>
+                <Text style={[styles.buttonText, { color: textColor }]}>
+                  {num}
+                </Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -55,19 +66,24 @@ export default function DialPadScreen() {
       {/* Controls */}
       <View style={styles.controls}>
         <TouchableOpacity
-          style={styles.controlButton}
+          style={[styles.controlButton, { backgroundColor: buttonColor }]}
           onPress={() => dispatch(deleteDigit())}
         >
-          <Text style={styles.controlText}>Delete</Text>
+          <Text style={[styles.controlText, { color: textColor }]}>Delete</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.callButton} onPress={handleCall}>
+
+        <TouchableOpacity
+          style={[styles.callButton, { backgroundColor: callColor }]}
+          onPress={handleCall}
+        >
           <Text style={styles.callText}>Call</Text>
         </TouchableOpacity>
+
         <TouchableOpacity
-          style={styles.controlButton}
+          style={[styles.controlButton, { backgroundColor: buttonColor }]}
           onPress={() => dispatch(clearNumber())}
         >
-          <Text style={styles.controlText}>Clear</Text>
+          <Text style={[styles.controlText, { color: textColor }]}>Clear</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -79,13 +95,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
   },
   phoneNumber: {
     fontSize: 32,
     fontWeight: "bold",
     marginBottom: 20,
-    color: "#333",
   },
   dialPad: {
     marginBottom: 30,
@@ -97,16 +111,16 @@ const styles = StyleSheet.create({
   button: {
     width: 80,
     height: 80,
-    backgroundColor: "#ddd",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 40,
     margin: 10,
+    borderWidth: 1,
+    borderColor: "gray",
   },
   buttonText: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#333",
   },
   controls: {
     flexDirection: "row",
@@ -115,7 +129,6 @@ const styles = StyleSheet.create({
   },
   controlButton: {
     padding: 15,
-    backgroundColor: "#ccc",
     borderRadius: 10,
   },
   controlText: {
@@ -123,7 +136,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   callButton: {
-    padding: 15,
+    paddingVertical: 15,
+    paddingHorizontal: 40,
     backgroundColor: "#4CAF50",
     borderRadius: 10,
   },
