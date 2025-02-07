@@ -1,20 +1,34 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import { Picker } from "@react-native-picker/picker";
 import {
   addDigit,
   deleteDigit,
   clearNumber,
   addCallToHistory,
+  setCountryCode,
 } from "../../store/slices/dialerSlice";
 import { RootState } from "../../store/store";
 import { useRouter } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { ThemedText } from "@/components/ThemedText";
+import { useState } from "react";
+
+const countryCodes = [
+  { code: "+1", label: "USA" },
+  { code: "+91", label: "India" },
+  { code: "+44", label: "UK" },
+  { code: "+81", label: "Japan" },
+  { code: "+61", label: "Australia" },
+  { code: "+49", label: "Germany" },
+];
 
 export default function DialPadScreen() {
   const dispatch = useDispatch();
   const phoneNumber = useSelector(
     (state: RootState) => state.dialer.phoneNumber
+  );
+  const countryCode = useSelector(
+    (state: RootState) => state.dialer.countryCode
   );
   const router = useRouter();
 
@@ -26,7 +40,6 @@ export default function DialPadScreen() {
   const handleCall = () => {
     if (phoneNumber.length > 0) {
       dispatch(addCallToHistory());
-      // router.push("/history");
     }
   };
 
@@ -38,10 +51,25 @@ export default function DialPadScreen() {
   ];
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
+    <View style={[styles.container, { backgroundColor }]}> 
+      {/* Country Code Picker */}
+      <Picker
+        selectedValue={countryCode}
+        onValueChange={(itemValue) => dispatch(setCountryCode(itemValue))}
+        style={[styles.picker, { color: textColor }]}
+      >
+        {countryCodes.map((country) => (
+          <Picker.Item
+            key={country.code}
+            label={`${country.label} (${country.code})`}
+            value={country.code}
+          />
+        ))}
+      </Picker>
+
       {/* Display Dialed Number */}
-      <Text style={[styles.phoneNumber, { color: textColor }]}>
-        {phoneNumber || "Enter Number"}
+      <Text style={[styles.phoneNumber, { color: textColor }]}> 
+        {countryCode} {phoneNumber || "Enter Number"} 
       </Text>
 
       {/* Dial Pad */}
@@ -101,6 +129,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
   },
+  picker: {
+    width: "80%",
+    marginBottom: 10,
+  },
   dialPad: {
     marginBottom: 30,
   },
@@ -116,7 +148,6 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     margin: 10,
     borderWidth: 1,
-    borderColor: "gray",
   },
   buttonText: {
     fontSize: 28,
@@ -138,7 +169,6 @@ const styles = StyleSheet.create({
   callButton: {
     paddingVertical: 15,
     paddingHorizontal: 40,
-    backgroundColor: "#4CAF50",
     borderRadius: 10,
   },
   callText: {

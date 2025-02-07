@@ -2,11 +2,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface DialerState {
   phoneNumber: string;
+  countryCode: string;
   callHistory: string[];
 }
 
 const initialState: DialerState = {
   phoneNumber: "",
+  countryCode: "+1", // Default country code (USA)
   callHistory: [],
 };
 
@@ -25,14 +27,18 @@ const dialerSlice = createSlice({
     clearNumber: (state) => {
       state.phoneNumber = "";
     },
+    setCountryCode: (state, action: PayloadAction<string>) => {
+      state.countryCode = action.payload;
+    },
     addCallToHistory: (state) => {
       if (state.phoneNumber) {
-        state.callHistory.unshift(state.phoneNumber);
+        state.callHistory.unshift(`${state.countryCode} ${state.phoneNumber}`);
         state.phoneNumber = ""; // Reset after call
       }
     },
   },
 });
 
-export const { addDigit, deleteDigit, clearNumber, addCallToHistory } = dialerSlice.actions;
+export const { addDigit, deleteDigit, clearNumber, setCountryCode, addCallToHistory } =
+  dialerSlice.actions;
 export default dialerSlice.reducer;
