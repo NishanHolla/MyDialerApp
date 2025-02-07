@@ -13,5 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-, "app/(tabs)/dialer.jsx", "app/(tabs)/index.jsx"  ]
+, "app/(tabs)/dialer.tsx", "app/(tabs)/index.jsx"  ]
 }
