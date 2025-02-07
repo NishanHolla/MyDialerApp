@@ -24,8 +24,19 @@ function Layout() {
           color: theme === "dark" ? "white" : "black",
         },
         headerRight: () => (
-          <View style={{ flexDirection: "row", alignItems: "center", marginRight: 15 }}>
-            <Text style={{ color: theme === "dark" ? "white" : "black", marginRight: 10 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginRight: 15,
+            }}
+          >
+            <Text
+              style={{
+                color: theme === "dark" ? "white" : "black",
+                marginRight: 10,
+              }}
+            >
               {theme.toUpperCase()}
             </Text>
             <Switch value={theme === "dark"} onValueChange={toggleTheme} />
@@ -34,38 +45,39 @@ function Layout() {
       }}
     >
       <Tabs.Screen
-        name="dialer"
+        name="index"
         options={{
           title: "Dial Pad",
-          tabBarIcon: ({ color, size }) => <Ionicons name="call" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="call" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="history"
         options={{
           title: "History",
-          tabBarIcon: ({ color, size }) => <Ionicons name="time" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="time" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="contacts"
         options={{
           title: "Contacts",
-          tabBarIcon: ({ color, size }) => <Ionicons name="people" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="people" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="addContact"
         options={{
           title: "Add Contact",
-          tabBarIcon: ({ color, size }) => <Ionicons name="person-add" size={size} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-add" size={size} color={color} />
+          ),
         }}
       />
     </Tabs>
