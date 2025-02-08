@@ -5,13 +5,16 @@ import { addContact } from "../../store/slices/contactsSlice";
 import { useRouter } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import Toast from "react-native-toast-message"; // Import the toast library
+import Toast from 'react-native-toast-message';
+import { Picker } from "@react-native-picker/picker"; // Import Picker
+import countryCodes from "../utils/countryCodes"; // Import country codes
 
 export default function AddContactScreen() {
   const dispatch = useDispatch();
   const router = useRouter();
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [countryCode, setCountryCode] = useState("+91"); // Default country code
 
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
@@ -19,25 +22,24 @@ export default function AddContactScreen() {
   const buttonColor = useThemeColor({}, "primary");
 
   const handleSaveContact = () => {
-    if (!name || !phoneNumber) {
-      Alert.alert("Error", "Both name and phone number are required");
+    if (!name || !phoneNumber || !countryCode) {
+      Alert.alert("Error", "Name, phone number, and country code are required");
       return;
     }
-    dispatch(addContact({ name, phone: phoneNumber }));
+    dispatch(addContact({ name, phone: phoneNumber, countryCode }));
     Toast.show({
-      type: "success",
-      text1: "Contact Added",
-      text2: `${name} has been added successfully.`,
+      type: 'success',
+      text1: 'Contact Added',
+      text2: `${name} has been added successfully.`
     });
-    setName(""); // Clear the input fields
+    setName("");
     setPhoneNumber("");
+    setCountryCode("+91"); // Reset to default country code
   };
 
   return (
     <View style={{ flex: 1, padding: 20, backgroundColor }}>
-      <ThemedText
-        style={{ fontSize: 24, fontWeight: "bold", marginBottom: 10 }}
-      >
+      <ThemedText style={{ fontSize: 24, fontWeight: "bold", marginBottom: 10 }}>
         Add Contact
       </ThemedText>
 
@@ -74,6 +76,21 @@ export default function AddContactScreen() {
         }}
       />
 
+      {/* Country Code Picker */}
+      <Picker
+        selectedValue={countryCode}
+        onValueChange={(itemValue) => setCountryCode(itemValue)}
+        style={{ color: textColor, marginBottom: 20 }} // Adjust styles as needed
+      >
+        {countryCodes.map((country) => (
+          <Picker.Item
+            key={country.code}
+            label={`${country.label} (${country.code})`}
+            value={country.code}
+          />
+        ))}
+      </Picker>
+
       <TouchableOpacity
         onPress={handleSaveContact}
         style={{
@@ -82,14 +99,12 @@ export default function AddContactScreen() {
           borderRadius: 8,
         }}
       >
-        <ThemedText
-          style={{ textAlign: "center", fontSize: 18, fontWeight: "bold" }}
-        >
+        <ThemedText style={{ textAlign: "center", fontSize: 18, fontWeight: "bold" }}>
           Save Contact
         </ThemedText>
       </TouchableOpacity>
 
-      <Toast ref={(ref) => Toast.setRef(ref)} />
+      <Toast ref={(ref) => Toast.setRef(ref)} /> {/* Add the Toast component */}
     </View>
   );
 }

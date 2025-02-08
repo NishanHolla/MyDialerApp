@@ -62,7 +62,7 @@ export default function ContactsScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() => Linking.openURL(`tel:${item.phone}`)} // This will open the dialer with the contact's phone number
+            onPress={() => Linking.openURL(`tel:${item.countryCode}${item.phone}`)} // This will open the dialer with the contact's phone number and country code
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
@@ -73,7 +73,7 @@ export default function ContactsScreen() {
             }}
           >
             <Text style={{ fontSize: 18, color: textColor }}>
-              {item.name} - {item.phone}
+              {item.name} - {item.countryCode} {item.phone}
             </Text>
             {blockedContacts.includes(item.id) ? (
               <TouchableOpacity

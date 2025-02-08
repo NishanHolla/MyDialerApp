@@ -6,6 +6,7 @@ interface Contact {
   id: string;
   name: string;
   phone: string;
+  countryCode: string;
 }
 
 interface ContactsState {
@@ -24,7 +25,7 @@ const contactsSlice = createSlice({
   name: "contacts",
   initialState,
   reducers: {
-    addContact: (state, action: PayloadAction<{ name: string; phone: string }>) => {
+    addContact: (state, action: PayloadAction<{ name: string; phone: string; countryCode: string }>) => {
       state.contacts.push({ id: uuidv4(), ...action.payload });
     },
     removeContact: (state, action: PayloadAction<string>) => {
