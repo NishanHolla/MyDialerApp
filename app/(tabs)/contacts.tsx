@@ -7,7 +7,11 @@ import {
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../store/store";
-import { setSearchQuery } from "../../store/slices/contactsSlice";
+import {
+  setSearchQuery,
+  blockContact,
+  unblockContact,
+} from "../../store/slices/contactsSlice";
 import { useRouter } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useTheme } from "@react-navigation/native";
@@ -16,6 +20,9 @@ export default function ContactsScreen() {
   const dispatch = useDispatch();
   const router = useRouter();
   const contacts = useSelector((state: RootState) => state.contacts.contacts);
+  const blockedContacts = useSelector(
+    (state: RootState) => state.contacts.blockedContacts
+  );
   const searchQuery = useSelector(
     (state: RootState) => state.contacts.searchQuery
   );
@@ -53,16 +60,43 @@ export default function ContactsScreen() {
         data={filteredContacts}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <Text
+          <View
             style={{
-              fontSize: 18,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
               padding: 10,
               borderBottomWidth: 1,
-              color: textColor,
+              borderColor: textColor,
             }}
           >
-            {item.name} - {item.phone}
-          </Text>
+            <Text style={{ fontSize: 18, color: textColor }}>
+              {item.name} - {item.phone}
+            </Text>
+            {blockedContacts.includes(item.id) ? (
+              <TouchableOpacity
+                onPress={() => dispatch(unblockContact(item.id))}
+                style={{
+                  backgroundColor: "red",
+                  padding: 10,
+                  borderRadius: 5,
+                }}
+              >
+                <Text style={{ color: "white" }}>Unblock</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                onPress={() => dispatch(blockContact(item.id))}
+                style={{
+                  backgroundColor: "green",
+                  padding: 10,
+                  borderRadius: 5,
+                }}
+              >
+                <Text style={{ color: "white" }}>Block</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         )}
       />
       <TouchableOpacity

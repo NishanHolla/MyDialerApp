@@ -10,11 +10,13 @@ interface Contact {
 
 interface ContactsState {
   contacts: Contact[];
+  blockedContacts: string[];
   searchQuery: string;
 }
 
 const initialState: ContactsState = {
   contacts: [],
+  blockedContacts: [],
   searchQuery: "",
 };
 
@@ -28,11 +30,20 @@ const contactsSlice = createSlice({
     removeContact: (state, action: PayloadAction<string>) => {
       state.contacts = state.contacts.filter((contact) => contact.id !== action.payload);
     },
+    blockContact: (state, action: PayloadAction<string>) => {
+      state.blockedContacts.push(action.payload);
+    },
+    unblockContact: (state, action: PayloadAction<string>) => {
+      state.blockedContacts = state.blockedContacts.filter(
+        (contactId) => contactId !== action.payload
+      );
+    },
     setSearchQuery: (state, action: PayloadAction<string>) => {
       state.searchQuery = action.payload;
     },
   },
 });
 
-export const { addContact, removeContact, setSearchQuery } = contactsSlice.actions;
+export const { addContact, removeContact, blockContact, unblockContact, setSearchQuery } =
+  contactsSlice.actions;
 export default contactsSlice.reducer;
