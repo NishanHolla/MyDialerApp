@@ -4,6 +4,7 @@ import {
   TextInput,
   FlatList,
   TouchableOpacity,
+  Linking,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../store/store";
@@ -60,7 +61,8 @@ export default function ContactsScreen() {
         data={filteredContacts}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View
+          <TouchableOpacity
+            onPress={() => Linking.openURL(`tel:${item.phone}`)} // This will open the dialer with the contact's phone number
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
@@ -96,7 +98,7 @@ export default function ContactsScreen() {
                 <Text style={{ color: "white" }}>Block</Text>
               </TouchableOpacity>
             )}
-          </View>
+          </TouchableOpacity>
         )}
       />
       <TouchableOpacity
