@@ -1,6 +1,7 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { Picker } from "@react-native-picker/picker";
+import { Linking } from "react-native";
 import {
   addDigit,
   deleteDigit,
@@ -12,15 +13,9 @@ import { RootState } from "../../store/store";
 import { useRouter } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useState } from "react";
-
-const countryCodes = [
-  { code: "+1", label: "USA" },
-  { code: "+91", label: "India" },
-  { code: "+44", label: "UK" },
-  { code: "+81", label: "Japan" },
-  { code: "+61", label: "Australia" },
-  { code: "+49", label: "Germany" },
-];
+import styles from "../styles/dialerStyle";
+import countryCodes from "../utils/countryCodes";
+import dialPadButtons from "../utils/dialpadButtons";
 
 export default function DialPadScreen() {
   const dispatch = useDispatch();
@@ -40,15 +35,10 @@ export default function DialPadScreen() {
   const handleCall = () => {
     if (phoneNumber.length > 0) {
       dispatch(addCallToHistory());
+      const phoneNumberWithCode = `${countryCode}${phoneNumber}`;
+      Linking.openURL(`tel:${phoneNumberWithCode}`);
     }
-  };
-
-  const dialPadButtons = [
-    ["1", "2", "3"],
-    ["4", "5", "6"],
-    ["7", "8", "9"],
-    ["*", "0", "#"],
-  ];
+  };  
 
   return (
     <View style={[styles.container, { backgroundColor }]}> 
@@ -117,63 +107,3 @@ export default function DialPadScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  phoneNumber: {
-    fontSize: 32,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  picker: {
-    width: "80%",
-    marginBottom: 10,
-  },
-  dialPad: {
-    marginBottom: 30,
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  button: {
-    width: 80,
-    height: 80,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 40,
-    margin: 10,
-    borderWidth: 1,
-  },
-  buttonText: {
-    fontSize: 28,
-    fontWeight: "bold",
-  },
-  controls: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "80%",
-  },
-  controlButton: {
-    padding: 15,
-    borderRadius: 10,
-  },
-  controlText: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  callButton: {
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    borderRadius: 10,
-  },
-  callText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#fff",
-  },
-});
