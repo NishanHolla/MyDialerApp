@@ -1,3 +1,4 @@
+import React from "react";
 import {
   View,
   Text,
@@ -12,10 +13,37 @@ import {
   setSearchQuery,
   blockContact,
   unblockContact,
+  setContacts,
 } from "../../store/slices/contactsSlice";
 import { useRouter } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { useTheme } from "@react-navigation/native";
+import { useGoogleAuth } from "@/hooks/useGoogleAuth";
+import axios from "axios";
+
+const fetchGoogleContacts = async (accessToken) => {
+  try {
+    const contactsResponse = await axios.get("https://people.googleapis.com/v1/people/me/connections", {
+      params: {
+        personFields: "names,phoneNumbers",
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const contacts = contactsResponse.data.connections?.map((connection) => ({
+      id: connection.resourceName,
+      name: connection.names?.[0]?.displayName || "No Name",
+      phone: connection.phoneNumbers?.[0]?.value || "No Phone Number",
+      countryCode: connection.phoneNumbers?.[0]?.canonicalForm.split(" ")[0] || "+1",
+    }));
+
+    return contacts;
+  } catch (error) {
+    console.error("Error fetching contacts:", error);
+    throw error;
+  }
+};
 
 export default function ContactsScreen() {
   const dispatch = useDispatch();
@@ -31,6 +59,11 @@ export default function ContactsScreen() {
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
 
+  const { promptAsync } = useGoogleAuth(async (accessToken) => {
+    const contacts = await fetchGoogleContacts(accessToken);
+    dispatch(setContacts(contacts));
+  });
+
   const filteredContacts = Array.isArray(contacts)
     ? contacts.filter((contact) =>
         contact.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -44,7 +77,7 @@ export default function ContactsScreen() {
       </Text>
       <TextInput
         placeholder="Search contacts..."
-        placeholderTextColor={backgroundColor === "#121212" ? "#BBB" : "#555"} // Lighter color for dark mode
+        placeholderTextColor={backgroundColor === "#121212" ? "#BBB" : "#555"}
         value={searchQuery}
         onChangeText={(text) => dispatch(setSearchQuery(text))}
         style={{
@@ -62,7 +95,7 @@ export default function ContactsScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() => Linking.openURL(`tel:${item.countryCode}${item.phone}`)} // This will open the dialer with the contact's phone number and country code
+            onPress={() => Linking.openURL(`tel:${item.countryCode}${item.phone}`)}
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
@@ -101,6 +134,17 @@ export default function ContactsScreen() {
           </TouchableOpacity>
         )}
       />
+      <TouchableOpacity
+        onPress={() => promptAsync()} // Trigger OAuth prompt
+        style={{
+          backgroundColor: useThemeColor({}, "primary"),
+          padding: 15,
+          borderRadius: 5,
+          marginTop: 20,
+        }}
+      >
+        <Text style={{ color: "white", textAlign: "center" }}>Fetch Contacts</Text>
+      </TouchableOpacity>
       <TouchableOpacity
         onPress={() => router.push("/addContact")}
         style={{

@@ -42,9 +42,12 @@ const contactsSlice = createSlice({
     setSearchQuery: (state, action: PayloadAction<string>) => {
       state.searchQuery = action.payload;
     },
+    setContacts: (state, action: PayloadAction<Contact[]>) => {
+      state.contacts = action.payload;
+    },
   },
 });
 
-export const { addContact, removeContact, blockContact, unblockContact, setSearchQuery } =
+export const { addContact, removeContact, blockContact, unblockContact, setSearchQuery, setContacts } =
   contactsSlice.actions;
 export default contactsSlice.reducer;
